@@ -1,24 +1,19 @@
 import logo from './logo.svg';
-import styles from './App.module.css';
+import { Switch, Match } from 'solid-js';
+import Dashboard from './pages/dashboard';
+import Login from './pages/login';
 
 function App() {
-  return (
-    <div class={styles.App}>
-      <header class={styles.header}>
-        <img src={logo} class={styles.logo} alt="logo" />
-        <p>
-          Edit <code>src/App.jsx</code> and save to reload.
-        </p>
-        <a
-          class={styles.link}
-          href="https://github.com/solidjs/solid"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn Solid
-        </a>
-      </header>
-    </div>
+
+  // Récuperer le dernier elt de l'url
+  const page = window.location.pathname
+
+  return (<>
+    <Switch fallback={<div>Page not found</div>}>
+      <Match when={ page == "/" }> <Dashboard/></Match>
+      <Match when={ page == "/login" }> <Login/></Match>
+    </Switch>
+  </>
   );
 }
 
