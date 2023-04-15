@@ -68,7 +68,7 @@ export default function Evolution(props){
         })
     })
 
-    return (<>n
+    return (<>
         <main id='lbl-1' class=" flex flex-wrap w-full rounded p-6 bg-[#383838] text-white">
             <section className="w-full flex flex-wrap">
                 <div className="">

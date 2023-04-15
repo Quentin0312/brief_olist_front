@@ -33,17 +33,34 @@ export default function MapSection(){
                 backgroundColor: 'transparent',
                 height: 900
             },
-            title: {text: 'Braisil - Chiffre affaire par région'},
+            title: {
+                text: 'Brésil - Chiffres d\'affaire par région',
+                style: {
+                    color: 'white',
+                    fontWeight: 'bold',
+                    fontSize:'24px',
+                }
+            },
             series: [{
                 data: mapData,
                 name: 'Région',
-                states: { hover: { color: '#BADA55' } },
+                states: { hover: { color: '#a3a3a3' } },
 
                 dataLabels: {
                     enabled: true,
                     format: '{point.name}'
                 },
             }],
+            colorAxis: {
+                type: 'logarithmic',
+                minColor: '#ffffff',
+                maxColor:'#3060cf',   //#4a4a4a  #3060cf
+            },
+            legend: {
+                backgroundColor: '#ffffff',
+            },
+        
+    
             plotOptions: {
                 series: {
                      cursor: 'pointer',
