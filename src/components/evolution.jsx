@@ -1,92 +1,125 @@
-import * as Highcharts from 'highcharts/highmaps';
-import Exporting from 'highcharts/modules/exporting';
 import { createSignal, onMount } from 'solid-js';
 import { request } from '../request';
-Exporting(Highcharts);  
+import { Chart, registerables} from 'chart.js';
 
-const buildChart = (containerid, chartData) => {
-    Highcharts.chart(containerid, {
-        exporting: {
-            buttons: {
-                contextButton: {
-                    enabled: false  
+Chart.register(...registerables);
+const buildChart = (container_id, chart_type, chart_data_options) => {
+    const contex = document.getElementById(container_id).getContext("2d");
+    return new Chart(contex, {
+        type: chart_type,
+        ...chart_data_options
+    })
+}
+
+
+export default function Evolution(props){
+    const loadData = async () =>{
+        return await  (await request('evolutions', 'GET', null)).json()
+    }
+
+    
+    
+    onMount(async () => {
+        const data = await loadData()
+        
+        buildChart('pie-10-produit', 'pie', {        
+            data: {
+                labels: data['TOP10product'][0],
+                datasets: [{
+                    label: '# of Votes',
+                    data: data['TOP10product'][1],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                plugins: {
+                    legend: {
+                      display: false
+                    }
                 }
             }
-        },
-
-        chart: {
-            type: chartData.type ?? 'pie',
-            backgroundColor: '#383838',
-            width: 505,
-            
-            
-        },
-        title: {
-            text: chartData.title ?? 'Pas de titre',
-            align: 'center',
-            style: {
-                color: 'white'
-            }
-        },
-        tooltip: {
-            headerFormat: '',
-            pointFormat: '<span style="color:{point.color}">\u25CF</span> <b> {point.name}</b><br/>' +
-                'Area (square km): <b>{point.y}</b><br/>' 
-        },
-        series: [{
-            minPointSize: 10,
-            innerSize: '60%',
-            zMin: 0,
-            name: 'countries',
-            data: [...chartData.series]
-        }],
-        
-    });
-}
-export default function Evolution(props){
-    const [pieData10Product, setPieData10Product] = createSignal()
-
-    const loadTop10 = async () =>{
-        const data = await  (await request('evolutions', 'GET', null)).json()
-        console.log(typeof(data['TOP10product']));
-        await setPieData10Product(data['TOP10product'])
-    }
-    loadTop10()
-    onMount(async () => {
-        
-        console.log(typeof(pieData10Product()));
-
-        buildChart('pie-10-produit', {
-            type: 'pie',
-            title: 'Top 10 produits',
-            series: pieData10Product()
         })
 
-        buildChart('pie-10-region', {
-            type: 'pie',
-            title: 'Top 10 region'
+        buildChart('pie-10-region', 'pie', {        
+            data: {
+                labels: data['TOP10states'][0],
+                datasets: [{
+                    label: '# of Votes',
+                    data: data['TOP10states'][1],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                plugins: {
+                    legend: {
+                      display: false
+                    }
+                }
+            }
+        })
+
+        buildChart('line-chiffre-affaire', 'line', {        
+            data: {
+                labels: data['evolutionsCA'][0],
+                datasets: [{
+                    label: '# of Votes',
+                    data: data['evolutionsCA'][1],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                      display: false
+                    }
+                }
+            }
+        })
+
+        buildChart('line-nb-orders', 'line', {        
+            data: {
+                labels: data['EvolutionsVolume'][0],
+                datasets: [{
+                    label: '# of Votes',
+                    data: data['EvolutionsVolume'][1],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Nombre commande / mois'
+                    },
+                    legend: {
+                      display: false
+                    }
+                }
+            }
         })
     })
 
-    return (<>
-        <main id='lbl-1' class=" flex flex-wrap w-full rounded p-6 bg-[#383838] text-white">
-            <section className="w-full flex flex-wrap">
+    return <>
+        <section id='section-evolution' class=" flex flex-wrap w-full rounded p-6 bg-[#383838] text-white">
+            <div className="flex flex-wrap justify-between w-full">
                 <div className="">
-                    <div id="pie-10-produit"></div>
+                    <canvas id="pie-10-produit"></canvas>
                 </div>
 
                 <div className="">
-                    <div id="pie-10-region"></div>
+                    <canvas id="pie-10-region"></canvas>
                 </div>
-            </section>
+            </div>
 
-            <section className="w-full flex flex-wrap">
-                line / tab section
-            </section>
+            <div className=" w-full">
+                <canvas id="line-chiffre-affaire" class='my-3'></canvas>
+                <canvas id="line-nb-orders" class='my-3'></canvas>
+            </div>
 
-            <section className="w-full flex flex-wrap">
-                line section
-            </section>
-        </main>
-    </>)
+        </section>
+    </>
 }
