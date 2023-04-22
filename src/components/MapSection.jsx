@@ -4,21 +4,26 @@ import * as Highcharts from 'highcharts/highmaps';
 import Exporting from 'highcharts/modules/exporting';
 Exporting(Highcharts);
 
-import {map, setMap} from '../signals'
+import {setMap, regionFilter, setRegionFilter} from '../signals'
 import { request } from "../request";
 
 
 export default function MapSection(){
-    const [onRegion,   setOnRegion]   = createSignal('braisil')
+    
     const [sellVolume, setSellVolume] = createSignal()
-    const [sumOrder,   setSumOrder]   = createSignal()
 
-
+    const selectInGeometries = (data, name) => {
+        for(const geo of data){
+            if(geo.id == name) return geo
+        }
+    }
+    
     onMount(async () =>{
         const topo    = await (await fetch('https://code.highcharts.com/mapdata/countries/br/br-all.topo.json')).json()
         const mapData = await (await request('map', 'GET', null)).json()
 
-        console.log(mapData )
+        setRegionFilter(selectInGeometries(topo.objects.default.geometries, 'BR.AC').properties['woe-name'])
+        setSellVolume(mapData[0][1])        
 
         const chart = Highcharts.mapChart('container', {
             exporting: {
@@ -68,7 +73,8 @@ export default function MapSection(){
                          events: {
                             click: function(e) {
                                 console.log(e.point);
-                                setOnRegion(e.point.name)
+                                setRegionFilter(e.point.name)
+                                setSellVolume(e.point.options.value)
                             }
                         }
                     }
@@ -85,9 +91,8 @@ export default function MapSection(){
     return (<>
         <div id="container"></div>
         <div class="w-3/5 shadow-xl px-5 py-4 mx-auto bg-[#4d576c] text-white rounded drop-shadow-[0_10px_15px_rgba(0,0,0,0.5)]">
-            Région: {onRegion()} <br />
+            Région: {regionFilter()} <br />
             Volume de ventes: {sellVolume()} <br />
-            Nombre de commandes total: {sumOrder()}
         </div>
     </>)
 }
