@@ -17,6 +17,7 @@
     "vite-plugin-solid": "^2.5.0"
   },
   "dependencies": {
+    "chart.js": "^4.2.1",
     "daisyui": "^2.51.5",
     "highcharts": "^10.3.3",
     "solid-js": "^1.6.10"
