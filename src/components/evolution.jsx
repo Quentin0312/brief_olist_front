@@ -33,6 +33,11 @@ export default function Evolution(props){
             },
             options: {
                 plugins: {
+                    title: {
+                        display: true,
+                        text: 'Top 10 produit'
+                    },
+
                     legend: {
                       display: false
                     }
@@ -51,6 +56,10 @@ export default function Evolution(props){
             },
             options: {
                 plugins: {
+                    title: {
+                        display: true,
+                        text: 'Top 10 par région'
+                    },
                     legend: {
                       display: false
                     }
@@ -69,8 +78,12 @@ export default function Evolution(props){
             },
             options: {
                 responsive: true,
-                maintainAspectRatio: true,
+                maintainAspectRatio: false,
                 plugins: {
+                    title: {
+                        display: true,
+                        text: 'Evolution du chiffre d\'affaire'
+                    },
                     legend: {
                       display: false
                     }
@@ -89,7 +102,7 @@ export default function Evolution(props){
             },
             options: {
                 responsive: true,
-                maintainAspectRatio: true,
+                maintainAspectRatio: false,
                 plugins: {
                     title: {
                         display: true,
@@ -104,20 +117,24 @@ export default function Evolution(props){
     })
 
     return <>
-        <section id='section-evolution' class=" flex flex-wrap w-full rounded p-6 bg-[#383838] text-white">
-            <div className="flex flex-wrap justify-between w-full">
+        <section id='section-evolution' class="w-full rounded px-6 py-4 bg-[#383838] text-white">
+            <div className="flex flex-wrap justify-around w-full">
                 <div className="">
-                    <canvas id="pie-10-produit"></canvas>
+                    <canvas id="pie-10-produit" style='height: 120px'></canvas>
                 </div>
 
                 <div className="">
-                    <canvas id="pie-10-region"></canvas>
+                    <canvas id="pie-10-region" style='height: 120px'></canvas>
                 </div>
             </div>
 
-            <div className=" w-full">
-                <canvas id="line-chiffre-affaire" class='my-3'></canvas>
-                <canvas id="line-nb-orders" class='my-3'></canvas>
+            <div className="w-full">
+                <div className="w-full">
+                    <canvas id="line-chiffre-affaire" style='height: 180px'></canvas>
+                </div>
+                <div className="w-full">
+                    <canvas id="line-nb-orders" style='height: 180px'></canvas>
+                </div>
             </div>
 
         </section>
