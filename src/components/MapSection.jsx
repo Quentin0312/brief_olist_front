@@ -31,7 +31,7 @@ export default function MapSection(){
             chart: { 
                 map: topo, 
                 backgroundColor: 'transparent',
-                height: 900
+                height: 600
             },
             title: {
                 text: 'Brésil - Chiffres d\'affaire par région',
@@ -84,7 +84,7 @@ export default function MapSection(){
 
     return (<>
         <div id="container"></div>
-        <div class="w-3/5 bg-base-100 shadow-xl px-5 py-4 mx-auto bg-[#2C2C2C] text-white rounded drop-shadow-[0_10px_15px_rgba(0,0,0,0.5)]">
+        <div class="w-3/5 shadow-xl px-5 py-4 mx-auto bg-[#4d576c] text-white rounded drop-shadow-[0_10px_15px_rgba(0,0,0,0.5)]">
             Région: {onRegion()} <br />
             Volume de ventes: {sellVolume()} <br />
             Nombre de commandes total: {sumOrder()}

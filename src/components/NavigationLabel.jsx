@@ -15,20 +15,20 @@ export default function NavigationLabel(){
     }
 
     return (<>
-    <nav class="flex w-full mx-auto my-5">
-        <button class="mx-3 w-1/4 bg-[#383838] text-white px-3 py-2 rounded drop-shadow-[0_5px_10px_rgba(0,0,0,0.3)] duration-300" data-label='evolution' onclick={changeLabel}>
+    <nav class="flex w-full mx-auto my-5 text-xs">
+        <button class="mr-3 w-1/4 bg-[#383838] text-white px-3 py-1 rounded drop-shadow-[0_5px_10px_rgba(0,0,0,0.3)] duration-300" data-label='evolution' onclick={changeLabel}>
             évolution détaillés
         </button>
 
-        <button class="mx-3 w-1/4 bg-[#383838] text-white px-3 py-2 rounded drop-shadow-[0_5px_10px_rgba(0,0,0,0.3)] duration-300" data-label='annonce' onclick={changeLabel}>
+        <button class="mx-3 w-1/4 bg-[#383838] text-white px-3 py-1 rounded drop-shadow-[0_5px_10px_rgba(0,0,0,0.3)] duration-300" data-label='annonce' onclick={changeLabel}>
             qualité de l'annonce 
         </button>
 
-        <button class="mx-3 w-1/4 bg-[#383838] text-white px-3 py-2 rounded drop-shadow-[0_5px_10px_rgba(0,0,0,0.3)] duration-300" data-label='nv-client-rebond' onclick={changeLabel}>
+        <button class="mx-3 w-1/4 bg-[#383838] text-white px-3 py-1 rounded drop-shadow-[0_5px_10px_rgba(0,0,0,0.3)] duration-300" data-label='nv-client-rebond' onclick={changeLabel}>
             Nouveaux clients et rebonds
         </button>
 
-        <button class="mx-3 w-1/4 bg-[#383838] text-white px-3 py-2 rounded drop-shadow-[0_5px_10px_rgba(0,0,0,0.3)] duration-300" data-label='local-inter' onclick={changeLabel}>
+        <button class="ml-3 w-1/4 bg-[#383838] text-white px-3 py-1 rounded drop-shadow-[0_5px_10px_rgba(0,0,0,0.3)] duration-300" data-label='local-inter' onclick={changeLabel}>
             local / inter-régional
         </button>
     </nav>
