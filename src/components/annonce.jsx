@@ -1,9 +1,12 @@
 import { createResource, onMount } from "solid-js"
 
 const descriptionChartRequest = async () => (await fetch('http://localhost:8000/api/annonces/', {method: 'GET'})).json().then(
-    response => {loadChart(response.description.labels, response.description.values)})
+    response => {
+        loadDescriptionChart(response.description.labels, response.description.values)
+        loadPhotosQtyChart(response.photos.labels, response.photos.values, )
+    })
 
-function loadChart(labels, values){
+function loadDescriptionChart(labels, values){
     const ctx = document.getElementById('descriptionChart');
     new Chart(ctx, {
         type: 'bar',
@@ -20,6 +23,29 @@ function loadChart(labels, values){
                 title: {
                     display: true,
                     text: 'Volume de ventes selon la longueur de la description des produits'
+                }
+            }
+        } 
+    })
+}
+
+function loadPhotosQtyChart(labels, values){
+    const ctx = document.getElementById('photosQtyChart');
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels : labels,
+            datasets : [{
+                label: 'test',
+                data: values,
+                borderWidth: 1
+            }]
+        },
+        options: {
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'Volume de ventes selon la quantité de photos'
                 }
             }
         } 
@@ -44,7 +70,7 @@ export default function Annonce(props){
             </section>
 
             <section className="w-full flex flex-wrap">
-                line / tab section
+                <canvas id="photosQtyChart"> </canvas>
             </section>
 
             <section className="w-full flex flex-wrap">
