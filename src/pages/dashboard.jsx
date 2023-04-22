@@ -6,22 +6,24 @@ import Evolution from "../components/evolution"
 import Annonce from "../components/annonce"
 import NVClientRebond from "../components/NVClientRebond"
 import LocalInter from "../components/LocalInter"
+import FilterBar from "../components/filter_bar"
 
 export default function Dashboard(){
 
-    const loadTop10 = async () => {
-
-    }
 
     return (<>
-    <div className="flex flex-wrap w-full h-[100vh]">
-        <section className="w-full lg:w-1/2">
+    <div className="flex flex-wrap w-full h-fit">
+        <section className="w-full lg:w-5/12">
             <MapSection />
         </section>
 
-        <main className="w-full lg:w-1/2 px-10">
-            <NavigationLabel />
-
+        <main className="w-full lg:w-7/12 px-10 h-fit">
+            <header>
+                <NavigationLabel />
+                <FilterBar />
+            </header>
+            
+        
             <div className="flex">
                 <Show when={onLabel() == 'evolution'}>
                     <Evolution />
