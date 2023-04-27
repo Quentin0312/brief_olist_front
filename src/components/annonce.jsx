@@ -1,14 +1,45 @@
-import { createResource, onMount } from "solid-js"
+import { createResource, onMount, createEffect } from "solid-js"
+import { getRegionPostcode } from "../signals"; 
 import ChartDataLabels from 'chartjs-plugin-datalabels';
+
+var photosChart
+var descriptionChart
 
 Chart.register(ChartDataLabels);
 
-const descriptionChartRequest = async () => (await fetch('http://localhost:8000/api/annonces/', {method: 'GET'})).json().then(
+function addData(chart, label, values) {
+    let iterationAddLabel = label.length
+    for (let k = 0; k < iterationAddLabel; k++){
+        chart.data.labels[k] = label[k];
+    }
+    for (let k = 0; k < iterationAddLabel; k++){
+        chart.data.datasets[0].data[k] = values[k];
+    }
+    chart.update();
+}
+
+function removeData(chart) {
+    console.log(chart)
+    let iteration = chart.data.labels.length
+    console.log(iteration)
+    for (let i = 0; i < iteration; i++){
+        chart.data.labels.pop();
+    }
+    let iterationValues = chart.data.datasets[0].data.length
+    for (let j = 0; j < iterationValues; j++){
+        chart.data.datasets[0].data.pop();
+    }
+    
+    chart.update();
+}
+
+const chartRequest = async () => (await fetch('http://localhost:8000/api/annonces/', {method: 'GET'})).json().then(
     response => {
-        const labelsPhotos=nettoyageLabels(response.photos.labels)
-        const labelsDescription=nettoyageLabels(response.description.labels)
-        loadDescriptionChart(labelsDescription, response.description.values)
-        loadPhotosQtyChart(labelsPhotos, response.photos.values, )
+        const labelsPhotos=nettoyageLabels(response.photos.labels);
+        const labelsDescription=nettoyageLabels(response.description.labels);
+        descriptionChart = loadDescriptionChart(labelsDescription, response.description.values);
+        photosChart = loadPhotosQtyChart(labelsPhotos, response.photos.values);
+        // console.log(photosChart)
     })
 
 function nettoyageLabels(labels){
@@ -21,10 +52,26 @@ function nettoyageLabels(labels){
     return cleanLabels
 }
 
+const chartRequestBis = async (region) => (await fetch('http://localhost:8000/api/annonces?region='+region, {method: 'GET'})).json().then(
+    response => {
+        descriptionChart = loadDescriptionChart(response.description.labels, response.description.values);
+        photosChart = loadPhotosQtyChart(response.photos.labels, response.photos.values);
+    })
+
+const updateChartRequest = async (region) => (await fetch('http://localhost:8000/api/annonces?region='+region, {method: 'GET'})).json().then(
+    response => {
+        console.log('getRegionPostcode()')
+        console.log(photosChart)
+        removeData(photosChart);
+        removeData(descriptionChart);
+        addData(descriptionChart, response.description.labels, response.description.values)
+        addData(photosChart, response.photos.labels, response.photos.values)
+    }
+)
 
 function loadDescriptionChart(labels, values){
     const ctx = document.getElementById('descriptionChart');
-    new Chart(ctx, {
+    let chart = new Chart(ctx, {
         type: 'bar',
         data: {
             labels : labels,
@@ -100,11 +147,12 @@ function loadDescriptionChart(labels, values){
               },
         } 
     })
+    return chart
 }
 
 function loadPhotosQtyChart(labels, values){
     const ctx = document.getElementById('photosQtyChart');
-    new Chart(ctx, {
+    let truc = new Chart(ctx, {
         type: 'bar',
         data: {
             labels : labels,
@@ -181,12 +229,30 @@ function loadPhotosQtyChart(labels, values){
               },
         } 
     })
+    return truc
 }
 
 
 export default function Annonce(props){
-    const [descriptionChartData] = createResource(descriptionChartRequest)
+    if (getRegionPostcode() == null){
+        const [chartDatas] = createResource(chartRequest);
+    }
 
+    createEffect(()=>{
+        if (getRegionPostcode() != null){
+            
+            // Cas onglet ouvert lors de la selection du pays
+            if (document.getElementById('photosQtyChart').style[0] == 'display' ){
+                const [updateChartDatas] = createResource(getRegionPostcode(), updateChartRequest);
+            }
+            // Cas changement d'onglet après qu'une région est déjà été séléctionné
+            else {
+                const [chartDatasBis] = createResource(getRegionPostcode(), chartRequestBis);
+            }
+
+        }
+
+    })
 
     return(<>
         <main id='lbl-1' class=" flex flex-wrap w-full rounded p-6 bg-[#383838] text-white space-y-4">
