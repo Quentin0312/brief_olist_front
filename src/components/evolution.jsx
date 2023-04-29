@@ -1,6 +1,7 @@
-import { createSignal, onMount } from 'solid-js';
+import { createEffect, createSignal, onMount } from 'solid-js';
 import { request } from '../request';
 import { Chart, registerables} from 'chart.js';
+import { dateFilter, onRegion } from '../signals';
 
 Chart.register(...registerables);
 const buildChart = (container_id, chart_type, chart_data_options) => {
@@ -13,15 +14,18 @@ const buildChart = (container_id, chart_type, chart_data_options) => {
 
 
 export default function Evolution(props){
-    const loadData = async () =>{
-        return await  (await request('evolutions', 'GET', null)).json()
+    const loadData = async (params) =>{
+        return await  (await request('evolutions?annee=' + dateFilter(), 'GET', null)).json()
     }
 
-    
-    
     onMount(async () => {
-        const data = await loadData()
+        let data = await loadData()
         
+        createEffect(async () => {
+            onRegion()
+            data = await loadData([dateFilter(), onRegion()])
+        })
+
         buildChart('pie-10-produit', 'pie', {        
             data: {
                 labels: data['TOP10product'][0],
