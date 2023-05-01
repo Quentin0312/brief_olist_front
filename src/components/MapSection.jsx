@@ -4,27 +4,42 @@ import * as Highcharts from 'highcharts/highmaps';
 import Exporting from 'highcharts/modules/exporting';
 Exporting(Highcharts);
 
-import {setMap, regionFilter, setRegionFilter, setRegionPostcode} from '../signals'
+import {setMap, regionFilter, setRegionFilter, setRegionPostcode, setTopographie, topographie, setOnRegion, onRegion} from '../signals'
 import { request } from "../request";
-
+import { regions, setRegions } from "../signals";
+import { findinTopoByID } from "../utils";
 
 export default function MapSection(){
     
     const [sellVolume, setSellVolume] = createSignal()
 
-    const selectInGeometries = (data, name) => {
-        for(const geo of data){
-            if(geo.id == name) return geo
+    const getFullNameListOfRegions = (topo_data) => {
+        var regions_ = []
+        for(var geo of topo_data){
+            if(geo.properties !== undefined && geo.properties['woe-name'])
+                regions_.push(geo.properties['woe-name'])
         }
-    }
+        setRegions(regions_)
+    } 
     
     onMount(async () =>{
+        // Reçois les données
         const topo    = await (await fetch('https://code.highcharts.com/mapdata/countries/br/br-all.topo.json')).json()
         const mapData = await (await request('map', 'GET', null)).json()
-
-        setRegionFilter(selectInGeometries(topo.objects.default.geometries, 'BR.AC').properties['woe-name'])
+        
+        // Défini les var global Topographie & onRegion
+        setTopographie(topo)
+        setOnRegion(findinTopoByID(mapData[0][0]))
+        
+        // Récupère une liste des noms des régions 
+        getFullNameListOfRegions(topo.objects.default.geometries)
+        
+        // Définir une valeur par région pour le filtre région
+        setRegionFilter(onRegion())
+        
+        // Définie un volume des ventes
         setSellVolume(mapData[0][1])        
-
+        
         const chart = Highcharts.mapChart('container', {
             exporting: {
                 buttons: {
