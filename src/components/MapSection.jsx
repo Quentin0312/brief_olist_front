@@ -4,7 +4,7 @@ import * as Highcharts from 'highcharts/highmaps';
 import Exporting from 'highcharts/modules/exporting';
 Exporting(Highcharts);
 
-import {setMap, regionFilter, setRegionFilter, setTopographie, topographie, setOnRegion, onRegion} from '../signals'
+import {setMap, regionFilter, setRegionFilter, setRegionPostcode, setTopographie, topographie, setOnRegion, onRegion} from '../signals'
 import { request } from "../request";
 import { regions, setRegions } from "../signals";
 import { findinTopoByID } from "../utils";
@@ -90,6 +90,9 @@ export default function MapSection(){
                                 console.log(e.point);
                                 setRegionFilter(e.point.name)
                                 setSellVolume(e.point.options.value)
+                                let selectedRegion = e.point.options['hc-key']
+                                selectedRegion = selectedRegion.slice(3,).toUpperCase()
+                                setRegionPostcode(selectedRegion)
                             }
                         }
                     }
