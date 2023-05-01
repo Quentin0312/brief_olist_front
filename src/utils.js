@@ -11,7 +11,7 @@ export function findinTopoByName(topo_name){
     return topo_geometries.filter(el => el.properties['woe-name'] == topo_name)[0]
 }
 
-export function getNameInToto(topo_region){
+export function getNameInTopo(topo_region){
     if(topo_region.properties){
         return topo_region.properties['woe-name']
     }
