@@ -5,6 +5,6 @@ const Formater = (data) => {
 }
 
 export const request = async (url, method, data) => {
-    const host = 'http://localhost:8000/api/'
+    const host = 'http://ftsw4800.odns.fr/api/api/'
     return fetch(host + url, { method: method, body: data != null ? Formater(data) : null})
 }
