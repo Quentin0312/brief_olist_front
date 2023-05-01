@@ -2,26 +2,29 @@ import { createEffect, createSignal } from "solid-js"
 import { dateFilter, onRegion, regionFilter, regions, setOnRegion } from "../signals";
 import { setDateFilter, setRegionFilter } from "../signals";
 import { request } from "../request";
-import { findinTopoByName } from "../utils";
+import { findinTopoByName, getNameInTopo } from "../utils";
 
 export default function FilterBar() {
-    
-    // createEffect(() => {
-    //     console.log(onRegion());
-    // })
+    var select_region = null;
 
+    const [dateRange, setDateRange] = createSignal([])
+    
+    const loadFilterParams = async () => {
+        const response = await ( await request('date/minmax', 'GET', null)).json()
+        setDateRange(response)
+    }
     const handleRegionFilter = (event) => {
         const region_name = event.target.value 
         const region      = findinTopoByName(region_name)
-        console.log(onRegion());
         setOnRegion(region)
-        console.log(onRegion());
     }
 
     const handleDateFilter = (event) => {
         console.log(event);
+        setDateFilter(event.target.value)
     }
 
+    loadFilterParams()
     return (<>
         <div id="filter-bar" class="flex flex-wrap w-full rounded px-5 py-2 mb-5 bg-[#4d576c] text-white"> 
             <h5 class="w-1/6 mr-5">Filtres: </h5>
@@ -36,6 +39,9 @@ export default function FilterBar() {
 
                 <select class="rounded p-1 px-3" name="date-filter" onchange={handleDateFilter}>
                     <option value="all">Toutes</option>
+                    <For each={dateRange()}>{(year, i) =>
+                        <option value={year}>{year}</option>
+                    }</For>
                 </select>
             </section>
         </div>

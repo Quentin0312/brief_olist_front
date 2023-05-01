@@ -1,7 +1,8 @@
-import { createEffect, createSignal, onMount } from 'solid-js';
+import { createEffect, createSignal, onMount, } from 'solid-js';
+import { createStore } from "solid-js/store";
 import { request } from '../request';
 import { Chart, registerables} from 'chart.js';
-import { dateFilter, onRegion } from '../signals';
+import { dateFilter, onRegion, setOnRegion } from '../signals';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 Chart.register(ChartDataLabels);
 
@@ -17,32 +18,65 @@ const buildChart = (container_id, chart_type, chart_data_options) => {
 
 
 export default function Evolution(props){
-    const loadData = async (params) =>{
-        return await  (await request('evolutions?annee=' + dateFilter(), 'GET', null)).json()
+    var top10_produit  = null
+    var top10_region = null
+    var evolution_ca = null
+    var orders_month = null
+
+    var chart_top10_product = null;
+    var chart_top10_region  = null;
+    var chart_evolution_ca  = null;
+    var chart_top10_order_month = null;
+
+    const updateGraph = (chart, labels, datas) => {
+        chart.data.labels           = labels
+        chart.data.datasets[0].data = datas
+        chart.update()
     }
 
-    ///////////////////  Ancienne requête
-    // const loadData = async () =>{
-    //     return await  (await request('evolutions', 'GET', null)).json()
-    // }
+    const chartUpdateIfExist = (chart, data) => {
+        if(chart != null){
+            updateGraph(chart, data[0], data[1])
+        }   
+        return chart
+    }
+
+    const loadData = async () =>{
+        
+        const region   = onRegion() != null ? String(onRegion()['id']).toLowerCase().replace('.', '-')  : 'undefined'
+        const response = await  (await request('evolutions?annee=' + dateFilter() + '&region=' + region, 'GET', null)).json()
+        
+        top10_produit = response['TOP10product']
+        top10_region  = response['TOP10states']
+        evolution_ca  = response['evolutionsCA']
+        orders_month  = response['EvolutionsVolume']
+
+        chartUpdateIfExist(chart_top10_product, top10_produit)
+        chartUpdateIfExist(chart_top10_region, top10_region)
+        chartUpdateIfExist(chart_evolution_ca, evolution_ca)
+        chartUpdateIfExist(chart_top10_order_month, orders_month)
+    }
 
     onMount(async () => {
-        let data = await loadData()
+        await loadData()
         
         createEffect(async () => {
             onRegion()
-            data = await loadData([dateFilter(), onRegion()])
+            dateFilter()
+            console.log('okok');
+            await loadData()
         })
 
-        buildChart('pie-10-produit', 'pie', {        
+        chart_top10_product = buildChart('pie-10-produit', 'pie', {        
             data: {
-                labels: data['TOP10product'][0],
+                labels: top10_produit[0],
                 datasets: [{
                     label: 'Volume de ventes',
-                    data: data['TOP10product'][1],
+                    data: top10_produit[1],
                     borderWidth: 0.5,
                     borderColor:'grey',
-                    backgroundColor:['#4d576c',
+                    backgroundColor:[
+                        '#4d576c',
                         '#5c677a',
                         '#6b7789',
                         '#7b8797',
@@ -89,12 +123,12 @@ export default function Evolution(props){
             }
         })
 
-        buildChart('pie-10-region', 'pie', {        
+        chart_top10_region  = buildChart('pie-10-region', 'pie', {        
             data: {
-                labels: data['TOP10states'][0],
+                labels: top10_region[0],
                 datasets: [{
                     label: 'Chiffre d\'affaire',
-                    data: data['TOP10states'][1],
+                    data: top10_region[1],
                     borderWidth: 0.5,
                     borderColor:'grey',
                     backgroundColor:['#4d576c',
@@ -144,12 +178,12 @@ export default function Evolution(props){
             }
         })
 
-        buildChart('line-chiffre-affaire', 'line', {        
+        chart_evolution_ca  = buildChart('line-chiffre-affaire', 'line', {        
             data: {
-                labels: data['evolutionsCA'][0],
+                labels: evolution_ca[0],
                 datasets: [{
                     label: 'Chiffre d\'affaire',
-                    data: data['evolutionsCA'][1],
+                    data: evolution_ca[1],
                     borderWidth: 1
                 }]
             },
@@ -201,12 +235,12 @@ export default function Evolution(props){
             }
         })
 
-        buildChart('line-nb-orders', 'line', {        
+        chart_top10_order_month = buildChart('line-nb-orders', 'line', {        
             data: {
-                labels: data['EvolutionsVolume'][0],
+                labels: orders_month[0],
                 datasets: [{
                     label: 'Nombre de commandes',
-                    data: data['EvolutionsVolume'][1],
+                    data: orders_month[1],
                     borderWidth: 1
                 }]
             },
