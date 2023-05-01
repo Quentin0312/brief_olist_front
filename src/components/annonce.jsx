@@ -33,13 +33,12 @@ function removeData(chart) {
     chart.update();
 }
 
-const chartRequest = async () => (await fetch('http://localhost:8000/api/annonces/', {method: 'GET'})).json().then(
+const chartRequest = async () => (await request('annonces/', {method: 'GET'}, null)).json().then(
     response => {
         const labelsPhotos=nettoyageLabels(response.photos.labels);
         const labelsDescription=nettoyageLabels(response.description.labels);
         descriptionChart = loadDescriptionChart(labelsDescription, response.description.values);
         photosChart = loadPhotosQtyChart(labelsPhotos, response.photos.values);
-        // console.log(photosChart)
     })
 
 function nettoyageLabels(labels){
@@ -52,13 +51,13 @@ function nettoyageLabels(labels){
     return cleanLabels
 }
 
-const chartRequestBis = async (region) => (await fetch('http://localhost:8000/api/annonces?region='+region, {method: 'GET'})).json().then(
+const chartRequestBis = async (region) => (await request('annonces?region='+region, {method: 'GET'}, null)).json().then(
     response => {
         descriptionChart = loadDescriptionChart(response.description.labels, response.description.values);
         photosChart = loadPhotosQtyChart(response.photos.labels, response.photos.values);
     })
 
-const updateChartRequest = async (region) => (await fetch('http://localhost:8000/api/annonces?region='+region, {method: 'GET'})).json().then(
+const updateChartRequest = async (region) => (await request('annonces?region='+region, {method: 'GET'}, null)).json().then(
     response => {
         console.log('getRegionPostcode()')
         console.log(photosChart)
