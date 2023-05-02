@@ -1,5 +1,6 @@
 import { createResource, onMount, createEffect } from "solid-js"
 import { getRegionPostcode } from "../signals"; 
+import { request } from '../request';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 
 var photosChart
@@ -33,7 +34,7 @@ function removeData(chart) {
     chart.update();
 }
 
-const chartRequest = async () => (await fetch('http://localhost:8000/api/annonces/', {method: 'GET'})).json().then(
+const chartRequest = async () => (await request('annonces/','GET', null)).json().then(
     response => {
         const labelsPhotos=nettoyageLabels(response.photos.labels);
         const labelsDescription=nettoyageLabels(response.description.labels);
@@ -52,13 +53,13 @@ function nettoyageLabels(labels){
     return cleanLabels
 }
 
-const chartRequestBis = async (region) => (await fetch('http://localhost:8000/api/annonces?region='+region, {method: 'GET'})).json().then(
+const chartRequestBis = async (region) => (await request('annonces?region='+region,'GET', null)).json().then(
     response => {
         descriptionChart = loadDescriptionChart(response.description.labels, response.description.values);
         photosChart = loadPhotosQtyChart(response.photos.labels, response.photos.values);
     })
 
-const updateChartRequest = async (region) => (await fetch('http://localhost:8000/api/annonces?region='+region, {method: 'GET'})).json().then(
+const updateChartRequest = async (region) => (await request('annonces?region='+region,'GET', null)).json().then(
     response => {
         console.log('getRegionPostcode()')
         console.log(photosChart)
@@ -82,6 +83,7 @@ function loadDescriptionChart(labels, values){
             }]
         },
         options: {
+            aspectRatio: 3.5,
             plugins: {
                 title: {
                     display: true,
@@ -169,6 +171,7 @@ function loadPhotosQtyChart(labels, values){
             }]
         },
         options: {
+            aspectRatio: 3.5,
             plugins: {
                 title: {
                     display: true,
