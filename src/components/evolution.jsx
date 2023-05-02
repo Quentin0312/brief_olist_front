@@ -184,7 +184,6 @@ export default function Evolution(props){
                 datasets: [{
                     label: 'Chiffre d\'affaire',
                     data: evolution_ca[1],
-                    borderWidth: 1
                 }]
             },
             options: {
@@ -212,6 +211,9 @@ export default function Evolution(props){
                 },
                 scales: {
                     y: {
+                        grid: {
+                            color: '#4d576c'
+                        },
                       ticks: {
                          color: 'white',
                         },
@@ -226,6 +228,9 @@ export default function Evolution(props){
                           },
                     },
                     x: {
+                        grid: {
+                            color: '#4d576c'
+                        },
                       ticks: {
                          color: 'white'
                         },
@@ -240,8 +245,7 @@ export default function Evolution(props){
                 labels: orders_month[0],
                 datasets: [{
                     label: 'Nombre de commandes',
-                    data: orders_month[1],
-                    borderWidth: 1
+                    data: orders_month[1]
                 }]
             },
             options: {
@@ -270,6 +274,9 @@ export default function Evolution(props){
                 },
                 scales: {
                     y: {
+                        grid: {
+                            color: '#4d576c'
+                        },
                       ticks: {
                          color: 'white',
                         },
@@ -284,6 +291,9 @@ export default function Evolution(props){
                           },
                     },
                     x: {
+                        grid: {
+                            color: '#4d576c'
+                        },
                       ticks: {
                          color: 'white'
                         },
@@ -307,10 +317,10 @@ export default function Evolution(props){
             </div>
 
             <div className="w-full space-y-4">
-                <div className="w-full border-4 border-gray-600 rounded-md">
+                <div className="w-full ">
                     <canvas id="line-chiffre-affaire" style='height: 180px'></canvas>
                 </div>
-                <div className="w-full border-4 border-gray-600 rounded-md">
+                <div className="w-full ">
                     <canvas id="line-nb-orders" style='height: 180px'></canvas>
                 </div>
             </div>
