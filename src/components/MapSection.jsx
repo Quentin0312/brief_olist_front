@@ -7,7 +7,7 @@ Exporting(Highcharts);
 import {setMap, regionFilter, setRegionFilter, setRegionPostcode, setTopographie, topographie, setOnRegion, onRegion} from '../signals'
 import { request } from "../request";
 import { regions, setRegions } from "../signals";
-import { findinTopoByID } from "../utils";
+import { findinTopoByID, findinTopoByName } from "../utils";
 
 export default function MapSection(){
     
@@ -87,7 +87,9 @@ export default function MapSection(){
                      point: {
                          events: {
                             click: function(e) {
-                                console.log(e.point);
+                                console.log(e.point.name);
+                                setOnRegion(findinTopoByName(e.point.name))
+                                
                                 setRegionFilter(e.point.name)
                                 setSellVolume(e.point.options.value)
                                 let selectedRegion = e.point.options['hc-key']
